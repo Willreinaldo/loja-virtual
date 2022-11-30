@@ -1,26 +1,29 @@
 package lojaVirtual;
-
 import java.sql.Connection;
-import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class TestaListagem {
 
 	public static void main(String[] args) throws SQLException {
-		Connection con = DriverManager.getConnection("jdbc:mysql://localhost/loja_virtual?useTimezone=true&serverTimezone=UTC", "root", "williammonteiro10");
 
-		Statement stm = con.createStatement();
-		boolean resultado = stm.execute("SELECT ID, NOME, DESCRICAO FROM PRODUTO");
-	    ResultSet rst = stm.getResultSet();
+		ConnectionFactory connectionFactory = new ConnectionFactory();
+		Connection connection = connectionFactory.recuperarConexao();
+
+		PreparedStatement stm = connection.prepareStatement("SELECT ID, NOME, DESCRICAO FROM PRODUTO");
+		stm.execute();
+		ResultSet rst = stm.getResultSet();
 		while(rst.next()) {
-			Integer id = rst.getInt("id");
+			Integer id = rst.getInt("ID");
+			String nome = rst.getString("NOME");
+			String descricao = rst.getString("DESCRICAO");
 			System.out.println(id);
-			String nome = rst.getString("nome");
 			System.out.println(nome);
+			System.out.println(descricao);
 		}
-		con.close();
+		rst.close();
+		stm.close();
+		connection.close();
 	}
-
 }
